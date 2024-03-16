@@ -1,8 +1,11 @@
 ## Functionalities
 1. Adding a new event to the system
 Admin can add a new event by creating a new record (tuple) of Event relation.
+
 Usage:
+
 INSERT INTO Events (EID, AgeRestriction, StartDate, StartTime, DURATION, TypeID) VALUES (1, 0, '2023-07-28', '10:00', 90, 2)
+
 3. 
 
 ## Description
