@@ -2,7 +2,7 @@ Write a user-friendly application program for your database in Java connecting t
 
 • A list of at least five alternative tasks is offered to the user. An additional alternative should be quit.
 
-• The loop works as follows
+• The loop works as follows:
 
   – The user selects an alternative.
 
@@ -11,6 +11,7 @@ Write a user-friendly application program for your database in Java connecting t
   – The system accesses the database to perform the appropriate queries and/or modifications. – Data or an appropriate acknowledgment is returned to the user.
 
   – The user is returned to the menu after the execution of the task is completed.
+  
 
 Your program should follow the following guidelines.
 
@@ -21,6 +22,7 @@ Your program should follow the following guidelines.
 • At least one of the tasks should lead to a sub-menu that is created out of a database query.
 
 • Your program must handle errors appropriately. For Java, catch exceptions and print the error messages. Ensure that your program terminates gracefully (after closing any connections) even in the case of a database/SQL exception. If we notice your programs are leaving open hundreds of connections that are piling up at the database end and blocking resources, you might get penalized.
+
 
 For example, if your project were about skaters and competitions.
 
