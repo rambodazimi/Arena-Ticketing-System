@@ -7,7 +7,7 @@ The Arena Ticketing System (ATS) is a Software-As-A-Service product designed to 
 ## ER Model
 ![ER Model](https://i.ibb.co/5swJTrp/ER.png)
 
-## Functionalities
+## Application Program Functionalities
 
 ### 1. Add a new event to the system
 Admin can add a new event to the system. A new record (tuple) of Event will be created.
@@ -39,3 +39,6 @@ INSERT INTO Sponsorship (EID, SID) VALUES (32, 67)
 Admin can update an event information or remove an event from the system (with EID).
 
 UPDATE Events SET AgeRestriction = 0, StartDate = '2023-07-28', StartTime = '11:00', DURATION = 90, TypeID = 2 WHERE EID = 1;
+
+## Graphical User Interface
+To be completed!
