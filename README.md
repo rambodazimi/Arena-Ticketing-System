@@ -1,3 +1,8 @@
+## Functionalities:
+
+
+## Description:
+
 #### Write a user-friendly application program for your database in Java connecting to the DBMS via JDBC. You can base this on the example JDBC program that is given in mycourses as part of the JDBC tutorial. There is no need for a fancy interface. For example, a menu printed via simple console I/O is ok. Your program should consist of a menu with a loop in which:
 
 #### • A list of at least five alternative tasks is offered to the user. An additional alternative should be quit.
