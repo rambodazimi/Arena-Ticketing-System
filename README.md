@@ -1,12 +1,35 @@
 ## Functionalities
-1. Adding a new event to the system
-Admin can add a new event by creating a new record (tuple) of Event relation.
-
-Usage:
+1. Add a new event to the system
+Admin can add a new event to the system. A new record (tuple) of Event will be created.
 
 INSERT INTO Events (EID, AgeRestriction, StartDate, StartTime, DURATION, TypeID) VALUES (1, 0, '2023-07-28', '10:00', 90, 2)
 
-3. 
+
+2. Register a new user to the system
+User can create a new account and register on the system. A new record (tuple) of RegisteredUsers will be created.
+
+INSERT INTO RegisteredUsers (UserID, Username, Password, CreditCard, ExpiryDate, Location, PreferredType, PreferredGenre) VALUES (1, 'username1', 'password1', '1111-2222-3333-4444', '2025-01-01', 'Address1', 'Performance', 'Concert')
+
+
+3. Purchase a ticket from the system
+User can select an event and purchase a ticket within the system. A new record (tuple) of Tickets will be created.
+
+INSERT INTO Tickets (TicketID, Price, DesignatedEntrance, UserID, PurchaseDate, EID) VALUES (1, 10, 3, 7, '2023-05-20', 50)
+
+
+4. Add a new sponsor to an event
+Admin add add a new sponsor to an event within the system. A new record (tuple) of Sponsors and Sponsorship will be created.
+
+INSERT INTO Sponsors (SID, SponsorName, SponsorType) VALUES (1, 'Nike', 'Sportswear')
+
+INSERT INTO Sponsorship (EID, SID) VALUES (32, 67)
+
+
+5. Update/Delete an event from the system
+Admin can update an event information or remove an event from the system (with EID).
+
+UPDATE Events SET AgeRestriction = 0, StartDate = '2023-07-28', StartTime = '11:00', DURATION = 90, TypeID = 2 WHERE EID = 1;
+
 
 ## Description
 
