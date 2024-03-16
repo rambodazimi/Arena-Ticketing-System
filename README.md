@@ -8,7 +8,9 @@ Write a user-friendly application program for your database in Java connecting t
 
   – The system prompts the user for appropriate input values.
 
-  – The system accesses the database to perform the appropriate queries and/or modifications. – Data or an appropriate acknowledgment is returned to the user.
+  – The system accesses the database to perform the appropriate queries and/or modifications. 
+  
+  – Data or an appropriate acknowledgment is returned to the user.
 
   – The user is returned to the menu after the execution of the task is completed.
   
