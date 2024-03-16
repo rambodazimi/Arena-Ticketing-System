@@ -1,7 +1,11 @@
-## Functionalities:
+## Functionalities
+1. Adding a new event to the system
+Admin can add a new event by creating a new record (tuple) of Event relation.
+Usage:
+INSERT INTO Events (EID, AgeRestriction, StartDate, StartTime, DURATION, TypeID) VALUES (1, 0, '2023-07-28', '10:00', 90, 2)
+3. 
 
-
-## Description:
+## Description
 
 #### Write a user-friendly application program for your database in Java connecting to the DBMS via JDBC. You can base this on the example JDBC program that is given in mycourses as part of the JDBC tutorial. There is no need for a fancy interface. For example, a menu printed via simple console I/O is ok. Your program should consist of a menu with a loop in which:
 
