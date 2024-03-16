@@ -26,7 +26,7 @@
 • Your program must handle errors appropriately. For Java, catch exceptions and print the error messages. Ensure that your program terminates gracefully (after closing any connections) even in the case of a database/SQL exception. If we notice your programs are leaving open hundreds of connections that are piling up at the database end and blocking resources, you might get penalized.
 
 
-For example, if your project were about skaters and competitions.
+#### For example, if your project were about skaters and competitions.
 
 1. Look up whether a skater participates in a certain competition by skater name.
 2. Unroll a skater S in a competition C. If the rating level is below 3, S cannot enroll in any competition. If it is between 3 and 6, S can enroll in regional competitions only, if its is between 7 and 9, he/she can enroll in regional and national levels, and only with a skating level of 10 can S enroll in all types of competitions. If S is not qualified for the competition C, return a list of alternative competitions for which the S has the minimum rating level and which are close to C in terms of the date.
@@ -35,8 +35,6 @@ For example, if your project were about skaters and competitions.
 5. Increase the rating of skaters that were among the first 5 in at least 2 competitions of the highest level they can participate.
 6. Quit
 
-With this, the main menu could look like:
-
-To be turned in:
+#### To be turned in:
 
 Hand in all your .java files as separate files. Furthermore, create a section Application program in document project3.pdf. In this section include the screenshot of the execution of this program. Each of the options should be exercised at least once in your script.
