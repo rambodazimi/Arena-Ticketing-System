@@ -4,13 +4,13 @@ Write a user-friendly application program for your database in Java connecting t
 
 • The loop works as follows
 
-– The user selects an alternative.
+  – The user selects an alternative.
 
-– The system prompts the user for appropriate input values.
+  – The system prompts the user for appropriate input values.
 
-– The system accesses the database to perform the appropriate queries and/or modifications. – Data or an appropriate acknowledgment is returned to the user.
+  – The system accesses the database to perform the appropriate queries and/or modifications. – Data or an appropriate acknowledgment is returned to the user.
 
-– The user is returned to the menu after the execution of the task is completed.
+  – The user is returned to the menu after the execution of the task is completed.
 
 Your program should follow the following guidelines.
 
