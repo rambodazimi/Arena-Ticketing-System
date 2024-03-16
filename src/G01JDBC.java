@@ -27,7 +27,7 @@ class G01JDBC {
         // This is the url you must use for DB2.
         String url = "jdbc:db2://winter2024-comp421.cs.mcgill.ca:50000/comp421";
 
-        //REMEMBER to remove your user id and password before submitting your code!!
+        // REMEMBER to remove your user id and password before submitting your code!!
         String your_userid = "cs421g01";
         String your_password = "comp421g01";
         
