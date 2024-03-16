@@ -1,8 +1,8 @@
-Write a user-friendly application program for your database in Java connecting to the DBMS via JDBC. You can base this on the example JDBC program that is given in mycourses as part of the JDBC tutorial. There is no need for a fancy interface. For example, a menu printed via simple console I/O is ok. Your program should consist of a menu with a loop in which:
+#### Write a user-friendly application program for your database in Java connecting to the DBMS via JDBC. You can base this on the example JDBC program that is given in mycourses as part of the JDBC tutorial. There is no need for a fancy interface. For example, a menu printed via simple console I/O is ok. Your program should consist of a menu with a loop in which:
 
-• A list of at least five alternative tasks is offered to the user. An additional alternative should be quit.
+#### • A list of at least five alternative tasks is offered to the user. An additional alternative should be quit.
 
-• The loop works as follows:
+#### • The loop works as follows:
 
   – The user selects an alternative.
 
@@ -15,7 +15,7 @@ Write a user-friendly application program for your database in Java connecting t
   – The user is returned to the menu after the execution of the task is completed.
   
 
-Your program should follow the following guidelines.
+#### Your program should follow the following guidelines.
 
 • Your options should include both queries and modifications.
 
