@@ -718,10 +718,11 @@ class G01JDBC {
             System.out.println("-----------------------------------------------------------------------");
             System.out.println("| TicketID | Price | DesignatedEntrance | UserID | PurchaseDate | EID |");
             System.out.println("-----------------------------------------------------------------------");
-            
+            float totalPrice = 0;
             while (rs.next()){
               int ticketId = rs.getInt(1);
               float price = rs.getFloat(2);
+              totalPrice += price;
               int designatedEntrance = rs.getInt(3);
               int userId = rs.getInt(4);
               Date purchaseDate = rs.getDate(5);
@@ -729,6 +730,8 @@ class G01JDBC {
 
               System.out.printf("| %-9d| %-6.2f| %-19d| %-7d| %-13s| %-4d|%n", ticketId, price, designatedEntrance, userId, purchaseDate, eid);
             }
+            System.out.println("-----------------------------------------------------------------------");
+            System.out.println("Total Price: $" + totalPrice);
             System.out.println("-----------------------------------------------------------------------");
           }catch(SQLException e) {
             int sqlCode = e.getErrorCode(); // Get SQLCODE
