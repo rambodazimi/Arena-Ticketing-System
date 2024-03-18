@@ -47,7 +47,7 @@ class G01JDBC {
 
         // Main Menu
         System.out.println("Welcome to the Arena Ticketing System (ATS):");
-        int option;
+        int option = 0;
         do{
         	System.out.println("Main Menu:");
             System.out.println("1. Add a new event");
@@ -58,8 +58,12 @@ class G01JDBC {
             System.out.println("6. Exit");
             System.out.print("Enter your choice: ");
             
-            option = scanner.nextInt();
-            scanner.nextLine();
+            try {
+            	option = scanner.nextInt();
+            } catch(Exception e) {
+        		System.out.println("Invalid option! Please enter a number from 1 to 6.");
+            }
+        	scanner.nextLine();
 
             switch(option) {
             	case 1: // Add a new event
@@ -184,7 +188,7 @@ class G01JDBC {
             		
             	case 3: // Purchase a ticket
             		
-            		System.out.print("Enter your email address: ");
+            		System.out.print("Enter your email address: "); // we assume the user already exists in the database
             		String email = scanner.nextLine();
             		
             		// find UserID from email address
@@ -214,8 +218,9 @@ class G01JDBC {
             		
             		// List available events
             		System.out.println("\nSelect EID in which you wish to purchase a ticket: ");
-            		int eidPurchase = scanner.nextInt();
+            		int eidPurchase = scanner.nextInt(); // we assume the EID is already correct
             		
+            		// List of available seats
             		printSeats(statement);
             		
             		System.out.println("\nSelect your section number: ");
@@ -229,7 +234,7 @@ class G01JDBC {
             		
             		double highestPrice = 500;
             		
-            		double price = highestPrice / rowNum;
+            		double price = highestPrice / rowNum; // As the row increases, the price drops
             		
             		System.out.println("Total Price: $" + price);
             		
@@ -245,20 +250,18 @@ class G01JDBC {
                         if (rst.next()) {
                             maxIDt = rst.getInt(1);
                         }
-                        
                         int ticketID = maxIDt + 1;
                     	
+                        // Get current date
                         long currentTimeMillis = System.currentTimeMillis();
                         java.util.Date currentDate = new java.util.Date(currentTimeMillis);
-                        Date sqlDate = new Date(currentDate.getTime()); // Current Date
-                        
-                        System.out.println("USERID = " + userid);
-                        
+                        Date sqlDate = new Date(currentDate.getTime()); 
+                                                
                         addTicket(statement, ticketID, price, 1, userid, sqlDate, eidPurchase);
                         
                         // Fill the seat so that no one else can purchase that same seat
                         String removeQuery = "DELETE FROM SEATS WHERE SectionNumber='" + secNumber + "'" + " AND SeatNumber='" + seatNum + "'" + " AND RowNumber='" + rowNum + "'";
-                        int rowsAffected = statement.executeUpdate(removeQuery);  
+                        statement.executeUpdate(removeQuery);  
                      
                     } else {
                         System.out.println("Purchase cancelled.");
@@ -295,7 +298,7 @@ class G01JDBC {
             		break;
             		
             	case 6:
-            		
+            		System.out.println("Bye!");
             		break;
             		
             	default:
