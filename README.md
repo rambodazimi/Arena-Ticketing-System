@@ -10,20 +10,12 @@ The Arena Ticketing System (ATS) is a Software-As-A-Service product designed to 
 ## Application Program Functionalities
 
 ### 1. Add a new event to the system
-Admin can add a new event to the system. A new record (tuple) of Event will be created.
-
 
 ### 2. Register a new user to the system
-User can create a new account and register on the system. A new record (tuple) of RegisteredUsers will be created.
-
 
 ### 3. Purchase a ticket from the system
-User can select an event and purchase a ticket within the system. A new record (tuple) of Tickets will be created.
-
 
 ### 4. Add a new sponsor to an event
-Admin add add a new sponsor to an event within the system. A new record (tuple) of Sponsors and Sponsorship will be created.
-
 
 ### 5. Analytics
 1. View all events
