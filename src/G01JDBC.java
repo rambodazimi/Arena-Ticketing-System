@@ -2,37 +2,35 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.Scanner;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 
 class G01JDBC {
 	
-    public static void main (String[] args ) throws SQLException {
+    public static void main (String[] args) throws SQLException {
     	
-    	// Unique table names. Either the user supplies a unique identifier as a command line argument, or the program makes one up.
-        String tableName = "";
-        int sqlCode = 0;      // Variable to hold SQLCODE
-        String sqlState = "00000";  // Variable to hold SQLSTATE
+    	Scanner scanner = new Scanner(System.in);
+    	
+        int sqlCode = 0;
+        String sqlState = "00000";
 
-        if (args.length > 0)
-            tableName += args[0];
-        else
-          tableName += "exampletbl";
-
-        // Register the driver. You must register the driver before you can use it.
+        // Register the driver
         try { 
         	DriverManager.registerDriver(new com.ibm.db2.jcc.DB2Driver());
         }catch(Exception cnfe) {
         	System.out.println("Class not found"); 
         }
 
-        // This is the url you must use for DB2.
         String url = "jdbc:db2://winter2024-comp421.cs.mcgill.ca:50000/comp421";
 
         // REMEMBER to remove your user id and password before submitting your code!!
         String your_userid = "cs421g01";
         String your_password = "comp421g01";
         
-        //AS AN ALTERNATIVE, you can just set your password in the shell environment in the Unix (as shown below) and read it from there.
-        //$  export SOCSPASSWD=yoursocspasswd 
         
         if(your_userid == null && (your_userid = System.getenv("SOCSUSER")) == null) {
           System.err.println("Error!! do not have a password to connect to the database!");
@@ -47,95 +45,552 @@ class G01JDBC {
         Connection con = DriverManager.getConnection(url,your_userid,your_password);
         Statement statement = con.createStatement();
 
-        // Creating a table
-        try {
-          String createSQL = "CREATE TABLE " + tableName + " (id INTEGER, name VARCHAR (25)) ";
-          System.out.println(createSQL);
-          statement.executeUpdate(createSQL);
-          System.out.println ("DONE");
-        } catch(SQLException e) {
-          sqlCode = e.getErrorCode(); // Get SQLCODE
-          sqlState = e.getSQLState(); // Get SQLSTATE
-                
-          // Your code to handle errors comes here;
-          // something more meaningful than a print would be good
-          System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
-          System.out.println(e);
-         }
+        // Main Menu
+        System.out.println("Welcome to the Arena Ticketing System (ATS):");
+        int option;
+        do{
+        	System.out.println("Main Menu:");
+            System.out.println("1. Add a new event");
+            System.out.println("2. Register a new user");
+            System.out.println("3. Purchase a ticket");
+            System.out.println("4. Add a new sponsor to an event");
+            System.out.println("5. Analytics");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice: ");
+            
+            option = scanner.nextInt();
+            scanner.nextLine();
 
-        // Inserting Data into the table
-        try {
-          String insertSQL = "INSERT INTO " + tableName + " VALUES ( 1 , \'Vicki\' ) ";
-          System.out.println(insertSQL);
-          statement.executeUpdate(insertSQL);
-          System.out.println("DONE");
+            switch(option) {
+            	case 1: // Add a new event
+                    System.out.print("Age restriction: ");
+                    int ageRestriction = scanner.nextInt();
+                    scanner.nextLine();
 
-          insertSQL = "INSERT INTO " + tableName + " VALUES ( 2 , \'Vera\' ) ";
-          System.out.println(insertSQL);
-          statement.executeUpdate(insertSQL);
-          System.out.println("DONE");
-          insertSQL = "INSERT INTO " + tableName + " VALUES ( 3 , \'Franca\' ) ";
-          System.out.println(insertSQL);
-          statement.executeUpdate(insertSQL);
-          System.out.println("DONE");
+                    System.out.print("Start date (YYYY-MM-DD): ");
+                    String date = scanner.nextLine();
+                    
+                    Date startDate = null;
+                    try {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        
+                        java.util.Date utilDate = sdf.parse(date);
+                        
+                        startDate = new Date(utilDate.getTime());
+                    } catch (ParseException e) {
+                        System.out.println("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+                        return;
+                    }
+                    
+                    System.out.print("Start time (HH:mm:ss): ");
+                    String time = scanner.nextLine();
 
-        }catch(SQLException e) {
-          sqlCode = e.getErrorCode(); // Get SQLCODE
-          sqlState = e.getSQLState(); // Get SQLSTATE
-                
-          // Your code to handle errors comes here;
-          // something more meaningful than a print would be good
-          System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
-          System.out.println(e);
-        }
+                    Time startTime = null;
+                    try {
+                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                        
+                        java.util.Date utilDate = sdf.parse(time);
+                        
+                        startTime = new Time(utilDate.getTime());
+                    } catch (ParseException e) {
+                        System.out.println("Invalid time format. Please enter the time in HH:mm:ss format.");
+                        return;
+                    }
+                    
+                    System.out.print("Duration(integer number): ");
+                    int duration = scanner.nextInt();
+                    
+                    System.out.print("Type ID (integer): ");
+                    int typeId = scanner.nextInt();
 
-        // Querying a table
-        try {
-          String querySQL = "SELECT id, name from " + tableName + " WHERE NAME = \'Vicki\'";
-          System.out.println(querySQL);
-          java.sql.ResultSet rs = statement.executeQuery(querySQL);
+                    
+                    // generating EID
+                    String query = "SELECT MAX(EID) FROM EVENTS";
+                    java.sql.ResultSet rs = statement.executeQuery(query);
+                    int maxID = 0;
+                    if (rs.next()) {
+                        maxID = rs.getInt(1);
+                    }
+                    
+                    int eid = maxID + 1;
+                                        
+            		addEvent(statement, eid, ageRestriction, startDate, startTime, duration, typeId);
+            		break;
+            	
+            	case 2: // Add a new user
+                    System.out.print("Email Address: ");
+            		String emailAddress = scanner.nextLine();
+            		
+            		System.out.print("Date of Birth (YYYY-MM-DD): ");
+                    String dobi = scanner.nextLine();
+                    
+                    Date dob = null;
+                    try {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        
+                        java.util.Date utilDate = sdf.parse(dobi);
+                        
+                        dob = new Date(utilDate.getTime());
+                    } catch (ParseException e) {
+                        System.out.println("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+                        return;
+                    }
+            		
+                    System.out.print("Username: ");
+            		String username = scanner.nextLine();
 
-          while (rs.next()){
-            int id = rs.getInt(1);
-            String name = rs.getString(2);
-            System.out.println("id:  " + id);
-            System.out.println("name:  " + name);
-          }
-         System.out.println ("DONE");
-        }catch(SQLException e) {
-          sqlCode = e.getErrorCode(); // Get SQLCODE
-          sqlState = e.getSQLState(); // Get SQLSTATE
-                
-          // Your code to handle errors comes here;
-          // something more meaningful than a print would be good
-          System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
-          System.out.println(e);
-        }
+            		System.out.print("Password: ");
+             		String password = scanner.nextLine();
+             		
+             		System.out.print("Credit Card Number: ");
+             		String creditCard = scanner.nextLine();
+             		
+             		System.out.print("Expiry date (YYYY-MM-DD): ");
+                    String edate = scanner.nextLine();
+                    
+                    Date expiryDate = null;
+                    try {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        
+                        java.util.Date utilDate = sdf.parse(edate);
+                        
+                        expiryDate = new Date(utilDate.getTime());
+                    } catch (ParseException e) {
+                        System.out.println("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+                        return;
+                    }
+                    
+             		System.out.print("Location: ");
+             		String location = scanner.nextLine();
+             		
+             		System.out.print("Preferred Type: ");
+             		String preferredType = scanner.nextLine();
+             		
+             		System.out.print("Preferred Genre: ");
+             		String preferredGenre = scanner.nextLine();
+             		
+                    // generating UserID
+                    String query2 = "SELECT MAX(USERID) FROM USERS";
+                    java.sql.ResultSet rs2 = statement.executeQuery(query2);
+                    int maxID2 = 0;
+                    if (rs2.next()) {
+                        maxID2 = rs2.getInt(1);
+                    }
+                    
+                    int userID = maxID2 + 1;
+            		
+            		addUser(statement, userID, emailAddress, dob, username, password, creditCard, expiryDate, location, preferredType, preferredGenre);
+            		break;
+            		
+            	case 3: // Purchase a ticket
+            		
+            		System.out.print("Enter your email address: ");
+            		String email = scanner.nextLine();
+            		
+            		// find UserID from email address
+            		String userQuery = "SELECT UserID FROM USERS WHERE EmailAddress='" + email + "'";
+                    java.sql.ResultSet result = statement.executeQuery(userQuery);
+                    
+                    int userid = -1;
+                    while (result.next()){
+                      userid = result.getInt(1);
+                    }
+            		
+            		// Event Type
+            		System.out.print("Select: 1. Performances \t 2. Sport Games");
+            		int eventType = scanner.nextInt();
+            		
+            		if(eventType != 1 && eventType != 2) {
+            			System.out.println("Invalid Option!");
+            			break;
+            		}
+            		
+            		if(eventType == 1) {
+            			printPerformances(statement);
+            		}
+            		if(eventType == 2) {
+            			printSportGames(statement);
+            		}
+            		
+            		// List available events
+            		System.out.println("\nSelect EID in which you wish to purchase a ticket: ");
+            		int eidPurchase = scanner.nextInt();
+            		
+            		printSeats(statement);
+            		
+            		System.out.println("\nSelect your section number: ");
+            		int secNumber = scanner.nextInt();
 
-      //Updating a table
-      try {
-        String updateSQL = "UPDATE " + tableName + " SET NAME = \'Mimi\' WHERE id = 3";
-        System.out.println(updateSQL);
-        statement.executeUpdate(updateSQL);
-        System.out.println("DONE");
+            		System.out.println("\nSelect your seat number: ");
+            		int seatNum = scanner.nextInt();
+            		
+            		System.out.println("\nSelect your row number: ");
+            		int rowNum = scanner.nextInt();
+            		
+            		double highestPrice = 500;
+            		
+            		double price = highestPrice / rowNum;
+            		
+            		System.out.println("Total Price: $" + price);
+            		
+                    System.out.print("Confirm purchase (yes/no): ");
+                    String confirmation = scanner.next();
+                    
+                    if (confirmation.equalsIgnoreCase("yes")) {
+                    	
+                    	// generate TicketID
+                    	String queryt = "SELECT MAX(TicketID) FROM TICKETS";
+                        java.sql.ResultSet rst = statement.executeQuery(queryt);
+                        int maxIDt = 0;
+                        if (rst.next()) {
+                            maxIDt = rst.getInt(1);
+                        }
+                        
+                        int ticketID = maxIDt + 1;
+                    	
+                        long currentTimeMillis = System.currentTimeMillis();
+                        java.util.Date currentDate = new java.util.Date(currentTimeMillis);
+                        Date sqlDate = new Date(currentDate.getTime()); // Current Date
+                        
+                        System.out.println("USERID = " + userid);
+                        
+                        addTicket(statement, ticketID, price, 1, userid, sqlDate, eidPurchase);
+                        
+                        // Fill the seat so that no one else can purchase that same seat
+                        String removeQuery = "DELETE FROM SEATS WHERE SectionNumber='" + secNumber + "'" + " AND SeatNumber='" + seatNum + "'" + " AND RowNumber='" + rowNum + "'";
+                        int rowsAffected = statement.executeUpdate(removeQuery);  
+                     
+                    } else {
+                        System.out.println("Purchase cancelled.");
+                        break;
+                    }
+            		break;
+            		
+            	case 4: // Add a new sponsor
+            		System.out.print("Sponsor Name: ");
+             		String sponsorName = scanner.nextLine();
+             		
+             		System.out.print("Sponsor Type: ");
+             		String sponsorType = scanner.nextLine();
+            		
+                    // generating SID
+                    String query4 = "SELECT MAX(SID) FROM SPONSORS";
+                    java.sql.ResultSet rs4 = statement.executeQuery(query4);
+                    int maxID4 = 0;
+                    if (rs4.next()) {
+                        maxID4 = rs4.getInt(1);
+                    }
+                    
+                    int sid = maxID4 + 1;
+                    
+                    System.out.println("EID in which you wish to assign the sponsor: ");
+                    
+                    int eidRelation = scanner.nextInt();
+                    
+            		addSponsor(statement, sid, sponsorName, sponsorType, eidRelation);
+            		break;
+            		
+            	case 5: // Analytics
+            		// Sub Menu
+            		break;
+            		
+            	case 6:
+            		
+            		break;
+            		
+            	default:
+            		System.out.println("Invalid option! Please enter a number from 1 to 6.");
+            }
 
-        // Dropping a table
-        String dropSQL = "DROP TABLE " + tableName;
-        System.out.println(dropSQL);
-        statement.executeUpdate(dropSQL);
-        System.out.println("DONE");
-      }catch(SQLException e) {
-        sqlCode = e.getErrorCode(); // Get SQLCODE
-        sqlState = e.getSQLState(); // Get SQLSTATE
-                
-        // Your code to handle errors comes here;
-        // something more meaningful than a print would be good
-        System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
-        System.out.println(e);
-      }
-
-      // Finally but importantly close the statement and connection
-      statement.close();
-      con.close();
+        } while(option != 6);
+        
+  	statement.close();
+  	con.close();
     }
+    
+    
+    public static void addEvent(Statement statement, int eid, int ageRestriction, Date startDate, Time startTime, int duration, int typeId) {
+    	try{
+    	  String insertSQL = "INSERT INTO EVENTS (EID, AgeRestriction, StartDate, StartTime, Duration, TypeID) " +
+                    "VALUES (" + eid + "," + ageRestriction + ",'" + startDate + "','" + startTime + "'," + duration + "," + typeId + ")";
+          statement.executeUpdate(insertSQL);
+    	  System.out.println("Successfully added a new event with EID: " + eid + ", Age Restriction: " + ageRestriction + ", Start Date: " + startDate + ", Start Time: " + startTime + ", Duration: " + duration + ", Type ID: " + typeId);
+        }catch(SQLException e){
+          int sqlCode = e.getErrorCode(); 
+          String sqlState = e.getSQLState();
+          System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+          System.out.println(e);
+        }    	
+    }
+    
+    public static void addUser(Statement statement, int userID, String emailAddress, Date dob, String username, String password, String creditCard, Date expiryDate, String location, String preferredType, String preferredGenre) {
+    	// Adding regular User to the database
+    	try{
+    		String insertSQL = "INSERT INTO USERS (UserID, EmailAddress, DOB) " +
+                    "VALUES (" + userID + ",'" + emailAddress + "','" + dob + "')";
+
+          statement.executeUpdate(insertSQL);
+      	  System.out.println("Successfully added a new user with UserID: " + userID + ", Email Address: " + emailAddress + ", DOB: " + dob);
+          }catch(SQLException e){
+            int sqlCode = e.getErrorCode(); 
+            String sqlState = e.getSQLState();
+            System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+            System.out.println(e);
+          }   
+    	
+    	// Adding registered user to the database
+    	
+    	try{
+    	  String insertSQL = "INSERT INTO REGISTEREDUSERS (UserID, Username, Password, CreditCard, ExpiryDate, Location, PreferredType, PreferredGenre) " +
+                    "VALUES (" + userID + ",'" + username + "','" + password + "','" + creditCard + "','" + expiryDate + "','" + location + "','" + preferredType + "','" + preferredGenre + "')";
+    	  statement.executeUpdate(insertSQL);
+      	  System.out.println("Successfully added a new user with UserID: " + userID + ", Username: " + username + ", Password: " + password + ", CreditCard: " + creditCard + ", ExpiryDate: " + expiryDate + ", Location: " + location + ", PreferredType: " + preferredType + ", preferredGenre: " + preferredGenre);
+          }catch(SQLException e){
+            int sqlCode = e.getErrorCode(); 
+            String sqlState = e.getSQLState();
+            System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+            System.out.println(e);
+          }
+    }
+    
+    public static void addTicket(Statement statement, int ticketID, double price, int designatedEntrance, int userID, Date purchaseDate, int eid) {
+    	try{
+    		String insertSQL = "INSERT INTO Tickets (TicketID, Price, DesignatedEntrance, UserID, PurchaseDate, EID) " +
+                    "VALUES ('" + ticketID + "', '" + price + "', '" + designatedEntrance + "', '" + userID + "', '" + purchaseDate + "', '" + eid + "')";
+    		statement.executeUpdate(insertSQL);
+          	  System.out.println("Successfully added a new ticket with TicketID: " + ticketID);
+              }catch(SQLException e){
+                int sqlCode = e.getErrorCode(); 
+                String sqlState = e.getSQLState();
+                System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+                System.out.println(e);
+              }
+
+    }
+    
+    public static void addSponsor(Statement statement, int sid, String sponsorName, String sponsorType, int eid) {
+    	// Adding a new sponsor to the database
+    	try{
+    	  String insertSQL = "INSERT INTO SPONSORS (SID, SponsorName, SponsorType) " +
+                    "VALUES (" + sid + ",'" + sponsorName + "','" + sponsorType + "')";
+      	  statement.executeUpdate(insertSQL);
+        	  System.out.println("Successfully added a new sponsor with SID: " + sid + ", SponsorName: " + sponsorName + ", SponsorType: " + sponsorType);
+            }catch(SQLException e){
+              int sqlCode = e.getErrorCode(); 
+              String sqlState = e.getSQLState();
+              System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+              System.out.println(e);
+            }
+    	
+    	// Adding a new Sponsorship relationship
+    	try{
+      	  String insertSQL = "INSERT INTO SPONSORSHIP (EID, SID) " +
+                      "VALUES (" + eid + ",'" + sid + "')";
+        	  statement.executeUpdate(insertSQL);
+          	  System.out.println("Successfully added a new sponsorship with EID: " + eid + ", SID: " + sid);
+              }catch(SQLException e){
+                int sqlCode = e.getErrorCode(); 
+                String sqlState = e.getSQLState();
+                System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+                System.out.println(e);
+              }
+    }
+    
+    public static void printEvents(Statement statement) {
+    	try {
+            String querySQL = "SELECT * FROM EVENTS";
+            java.sql.ResultSet rs = statement.executeQuery(querySQL);
+            
+            System.out.println("--------------------------------------------------------------------");
+            System.out.println("| EID | AgeRestriction | StartDate | StartTime | Duration | TypeID |");
+            System.out.println("--------------------------------------------------------------------");
+            
+            while (rs.next()){
+              int eid = rs.getInt(1);
+              int ageRestriction = rs.getInt(2);
+              Date startDate = rs.getDate(3);
+              Time startTime = rs.getTime(4);
+              int duration = rs.getInt(5);
+              int typeId = rs.getInt(6);
+              
+              System.out.printf("| %-4d| %-15d| %-10s| %-10s| %-9d| %-7d|%n", eid, ageRestriction, startDate, startTime, duration, typeId);
+            }
+            System.out.println("--------------------------------------------------------------------");
+          }catch(SQLException e) {
+            int sqlCode = e.getErrorCode(); // Get SQLCODE
+            String sqlState = e.getSQLState(); // Get SQLSTATE
+                  
+            System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+            System.out.println(e);
+          }
+    }
+    
+    public static void printPerformances(Statement statement) {
+    	try {
+            String querySQL = "SELECT * FROM PERFORMANCES";
+            java.sql.ResultSet rs = statement.executeQuery(querySQL);
+            
+            System.out.println("---------------------------------------");
+            System.out.println("| EID | PerformanceType | Entertainer |");
+            System.out.println("---------------------------------------");
+            
+            while (rs.next()){
+              int eid = rs.getInt(1);
+              String performanceType = rs.getString(2);
+              String entertainer = rs.getString(3);
+              
+              System.out.printf("| %-4d| %-16s| %-12s|%n", eid, performanceType, entertainer);
+            }
+            System.out.println("---------------------------------------");
+
+          }catch(SQLException e) {
+            int sqlCode = e.getErrorCode(); // Get SQLCODE
+            String sqlState = e.getSQLState(); // Get SQLSTATE
+                  
+            System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+            System.out.println(e);
+          }
+    }
+    
+    public static void printSportGames(Statement statement) {
+    	try {
+            String querySQL = "SELECT * FROM SportGames";
+            java.sql.ResultSet rs = statement.executeQuery(querySQL);
+            
+            System.out.println("--------------------------------------------------------------------");
+            System.out.println("| EID |       AwayTeam      |       HomeTeam      |     GameType   |");
+            System.out.println("--------------------------------------------------------------------");
+            
+            while (rs.next()){
+              int eid = rs.getInt(1);
+              String awayTeam = rs.getString(2);
+              String homeTeam = rs.getString(3);
+              String gameType = rs.getString(4);
+
+              
+              System.out.printf("| %-4d| %-20s| %-20s| %-16s|%n", eid, awayTeam, homeTeam, gameType);
+            }
+            System.out.println("--------------------------------------------------------------------");
+          }catch(SQLException e) {
+            int sqlCode = e.getErrorCode(); // Get SQLCODE
+            String sqlState = e.getSQLState(); // Get SQLSTATE
+                  
+            System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+            System.out.println(e);
+          }
+    }
+    
+    public static void printRegisteredUsers(Statement statement) {
+    	try {
+            String querySQL = "SELECT * FROM RegisteredUsers";
+            java.sql.ResultSet rs = statement.executeQuery(querySQL);
+            
+            System.out.println("------------------------------------------------------------------------------------------------------");
+            System.out.println("| UserID | Username | Password | CreditCard | ExpiryDate | Location | PreferredType | PreferredGenre |");
+            System.out.println("------------------------------------------------------------------------------------------------------");
+            
+            while (rs.next()){
+              int userID = rs.getInt(1);
+              String username = rs.getString(2);
+              String password = "*****";
+              String creditCard = rs.getString(4).substring(0, 4) + " ****";
+              Date expiryDate = rs.getDate(5);
+              String location = rs.getString(6);
+              String preferredType = rs.getString(7);
+              String preferredGenre = rs.getString(8);
+              System.out.printf("| %-7d| %-9s| %-9s| %-11s| %-11s| %-9s| %-14s| %-15s|%n", userID, username, password, creditCard, expiryDate, location, preferredType, preferredGenre);
+            }
+            System.out.println("------------------------------------------------------------------------------------------------------");
+          }catch(SQLException e) {
+            int sqlCode = e.getErrorCode(); // Get SQLCODE
+            String sqlState = e.getSQLState(); // Get SQLSTATE
+                  
+            System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+            System.out.println(e);
+          }
+    }
+    
+    public static void printSponsors(Statement statement) {
+    	try {
+            String querySQL = "SELECT * FROM SPONSORS";
+            java.sql.ResultSet rs = statement.executeQuery(querySQL);
+            
+            System.out.println("-----------------------------------");
+            System.out.println("| SID | SponsorName | SponsorType |");
+            System.out.println("-----------------------------------");
+            
+            while (rs.next()){
+              int sid = rs.getInt(1);
+              String sponsorName = rs.getString(2);
+              String sponsorType = rs.getString(3);
+              
+              System.out.printf("| %-4d| %-12s| %-12s|%n", sid, sponsorName, sponsorType);
+            }
+            System.out.println("-----------------------------------");
+          }catch(SQLException e) {
+            int sqlCode = e.getErrorCode(); // Get SQLCODE
+            String sqlState = e.getSQLState(); // Get SQLSTATE
+                  
+            System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+            System.out.println(e);
+          }
+    }
+    
+    public static void printTickets(Statement statement) {
+    	try {
+            String querySQL = "SELECT * FROM TICKETS";
+            java.sql.ResultSet rs = statement.executeQuery(querySQL);
+            
+            System.out.println("-----------------------------------------------------------------------");
+            System.out.println("| TicketID | Price | DesignatedEntrance | UserID | PurchaseDate | EID |");
+            System.out.println("-----------------------------------------------------------------------");
+            
+            while (rs.next()){
+              int ticketId = rs.getInt(1);
+              float price = rs.getFloat(2);
+              int designatedEntrance = rs.getInt(3);
+              int userId = rs.getInt(4);
+              Date purchaseDate = rs.getDate(5);
+              int eid = rs.getInt(6);
+
+              System.out.printf("| %-9d| %-6.2f| %-19d| %-7d| %-13s| %-4d|%n", ticketId, price, designatedEntrance, userId, purchaseDate, eid);
+            }
+            System.out.println("-----------------------------------------------------------------------");
+          }catch(SQLException e) {
+            int sqlCode = e.getErrorCode(); // Get SQLCODE
+            String sqlState = e.getSQLState(); // Get SQLSTATE
+                  
+            System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+            System.out.println(e);
+          }
+    }
+    
+    public static void printSeats(Statement statement) {
+    	try {
+            String querySQL = "SELECT * FROM SEATS";
+            java.sql.ResultSet rs = statement.executeQuery(querySQL);
+            
+            System.out.println("--------------------------------------------------");
+            System.out.println("| SectionNumber | SeatNumber | RowNumber | Aisle |");
+            System.out.println("--------------------------------------------------");
+            
+            while (rs.next()){
+              int sectionNumber = rs.getInt(1);
+              int seatNumber = rs.getInt(2);
+              int rowNumber = rs.getInt(3);
+              String aisle = rs.getString(4);
+
+              System.out.printf("| %-14d| %-11d| %-10d| %-6s|%n", sectionNumber, seatNumber, rowNumber, aisle);
+            }
+            System.out.println("--------------------------------------------------");
+          }catch(SQLException e) {
+            int sqlCode = e.getErrorCode(); // Get SQLCODE
+            String sqlState = e.getSQLState(); // Get SQLSTATE
+                  
+            System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+            System.out.println(e);
+          }
+    }
+    
+    
 }
