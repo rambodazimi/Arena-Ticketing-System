@@ -26,8 +26,14 @@ Admin add add a new sponsor to an event within the system. A new record (tuple) 
 
 
 ### 5. Analytics
-Admin can see the tickets purchased, list of events, list of sponsorships, etc.
-
+1. View all events
+2. View performances
+3. View sport games
+4. View all users
+5. View registered users
+6. View all purchased tickets
+7. View purchased tickets of an event
+8. View all sponsors
 
 ## Graphical User Interface
 To be completed!
