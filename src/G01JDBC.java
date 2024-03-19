@@ -124,6 +124,7 @@ class G01JDBC {
             	
             	case 2: // Add a new user
                     System.out.print("Email Address: ");
+            		scanner.nextLine();
             		String emailAddress = scanner.nextLine();
             		
             		System.out.print("Date of Birth (YYYY-MM-DD): ");
