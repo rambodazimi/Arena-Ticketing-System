@@ -17,7 +17,9 @@ The Arena Ticketing System (ATS) is a Software-As-A-Service product designed to 
 
 ### 4. Add a new sponsor to an event
 
-### 5. Analytics
+### 5. Stored Procedure (Bracelet Required)
+
+### 6. Analytics
 1. View all events
 2. View performances
 3. View sport games
@@ -27,5 +29,8 @@ The Arena Ticketing System (ATS) is a Software-As-A-Service product designed to 
 7. View purchased tickets of an event
 8. View all sponsors
 
+### 7. Exit
+
 ## Graphical User Interface
-To be completed!
+[Shot 1](https://i.ibb.co/Fhjk5CH/Screenshot-2024-03-19-at-6-45-32-PM.png)https://i.ibb.co/Fhjk5CH/Screenshot-2024-03-19-at-6-45-32-PM.png
+[Shot 2](https://i.ibb.co/Q90JLXz/Screenshot-2024-03-19-at-6-45-47-PM.png)
