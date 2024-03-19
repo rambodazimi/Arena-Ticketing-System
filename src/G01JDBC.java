@@ -7,6 +7,7 @@ import java.sql.Time;
 import java.util.Scanner;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.sql.CallableStatement;
 
 
 class G01JDBC {
@@ -54,8 +55,9 @@ class G01JDBC {
             System.out.println("2. Register a new user");
             System.out.println("3. Purchase a ticket");
             System.out.println("4. Add a new sponsor to an event");
-            System.out.println("5. Analytics");
-            System.out.println("6. Exit");
+            System.out.println("5. Stored Procedure (Update Bracelet Required)");
+            System.out.println("6. Analytics");
+            System.out.println("7. Exit");
             System.out.print("Enter your choice: ");
             
             try {
@@ -388,7 +390,24 @@ class G01JDBC {
             		addSponsor(statement, sid, sponsorName, sponsorType, eidRelation);
             		break;
             		
-            	case 5: // Analytics
+            		
+            	case 5: // Stored Procedure
+            		System.out.print("Enter Age Restriction Limit: ");
+            		int ageRestrictionLimit = scanner.nextInt();
+            		
+            		System.out.println("Calling the stored procedure with Age Restriction Limit: " + ageRestrictionLimit);
+            		
+            		String storedProcedureCall = "{call UpdateBraceletRequirement(?)}";
+            		
+            		CallableStatement stmt = con.prepareCall(storedProcedureCall);
+                    stmt.setInt(1, ageRestrictionLimit);
+                    stmt.execute();
+                    System.out.println("Stored procedure executed successfully.");
+                    printFloorTickets(statement);
+                    
+            		break;
+            		
+            	case 6: // Analytics
             		// Sub Menu
                 	System.out.println("\nAnalytics");
                     System.out.println("1. View all events");
@@ -445,15 +464,15 @@ class G01JDBC {
                     
             		break;
             		
-            	case 6:
+            	case 7:
             		System.out.println("Bye!");
             		break;
             		
             	default:
-            		System.out.println("Invalid option! Please enter a number from 1 to 6.");
+            		System.out.println("Invalid option! Please enter a number from 1 to 7.");
             }
 
-        } while(option != 6);
+        } while(option != 7);
         
   	statement.close();
   	con.close();
@@ -791,6 +810,31 @@ class G01JDBC {
               System.out.printf("| %-14d| %-11d| %-10d| %-6s|%n", sectionNumber, seatNumber, rowNumber, aisle);
             }
             System.out.println("--------------------------------------------------");
+          }catch(SQLException e) {
+            int sqlCode = e.getErrorCode(); // Get SQLCODE
+            String sqlState = e.getSQLState(); // Get SQLSTATE
+                  
+            System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+            System.out.println(e);
+          }
+    }
+    
+    public static void printFloorTickets(Statement statement) {
+    	try {
+            String querySQL = "SELECT * FROM FLOORTICKETS";
+            java.sql.ResultSet rs = statement.executeQuery(querySQL);
+            
+            System.out.println("-------------------------------");
+            System.out.println("| TicketID | BraceletRequired |");
+            System.out.println("-------------------------------");
+            
+            while (rs.next()){
+              int ticketId = rs.getInt(1);
+              Boolean braceletRequired = rs.getBoolean(2);
+
+              System.out.printf("| %-9d| %-17b|%n", ticketId, braceletRequired);
+            }
+            System.out.println("-------------------------------");
           }catch(SQLException e) {
             int sqlCode = e.getErrorCode(); // Get SQLCODE
             String sqlState = e.getSQLState(); // Get SQLSTATE
